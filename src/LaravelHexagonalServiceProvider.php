@@ -5,6 +5,7 @@ namespace Koshuang\LaravelHexagonal;
 use Illuminate\Support\ServiceProvider;
 use Koshuang\LaravelHexagonal\Console\InstallCommand;
 use Koshuang\LaravelHexagonal\Console\MakeModuleCommand;
+use Koshuang\LaravelHexagonal\Console\ValidateCommand;
 
 class LaravelHexagonalServiceProvider extends ServiceProvider
 {
@@ -24,6 +25,7 @@ class LaravelHexagonalServiceProvider extends ServiceProvider
             $this->commands([
                 InstallCommand::class,
                 MakeModuleCommand::class,
+                ValidateCommand::class,
             ]);
         }
     }

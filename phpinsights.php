@@ -8,6 +8,7 @@ return [
         'build',
         'stubs',
         'vendor',
+        'src/Console/ValidateCommand.php',
     ],
     'remove' => [
         NunoMaduro\PhpInsights\Domain\Insights\ForbiddenNormalClasses::class,

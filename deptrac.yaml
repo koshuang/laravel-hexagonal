@@ -27,7 +27,7 @@ deptrac:
       collectors:
         -
           type: classLike
-          value: (Illuminate|Nwidart)\\.*
+          value: (Illuminate|Nwidart|Symfony\\Component\\Process)\\.*
   ruleset:
     Provider:
       - Console

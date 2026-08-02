@@ -33,11 +33,15 @@ class InstallCommand extends Command
             base_path('deptrac.yaml'),
             $force,
         );
-        $writer->addModulesAutoload(base_path('composer.json'), $force);
+        $composerPath = base_path('composer.json');
+        $writer->addModulesAutoload($composerPath, $force);
+        $writer->addDevDependency($composerPath, 'deptrac/deptrac', '^4.7', $force);
 
         $this->info('Laravel Hexagonal Architecture installed.');
+        $this->line('Run "composer update deptrac/deptrac" to install the architecture validation tools.');
         $this->line('Run "composer dump-autoload" before creating your first module.');
         $this->line('Create a module with: php artisan hexagonal:make-module <Name>');
+        $this->line('Validate architecture with: php artisan hexagonal:validate');
 
         return self::SUCCESS;
     }

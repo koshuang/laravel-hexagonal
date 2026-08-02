@@ -66,6 +66,43 @@ class ProjectFileWriter
         return true;
     }
 
+    public function addDevDependency(
+        string $composerPath,
+        string $package,
+        string $constraint,
+        bool $force = false,
+    ): bool {
+        if (! $this->files->exists($composerPath)) {
+            throw new RuntimeException("Composer file not found: {$composerPath}.");
+        }
+
+        $composer = $this->readComposer($composerPath);
+        $requireDev = $composer['require-dev'] ?? [];
+        $requireDev = is_array($requireDev) ? $requireDev : [];
+        $currentConstraint = $requireDev[$package] ?? null;
+
+        if ($currentConstraint !== null && ! is_string($currentConstraint)) {
+            throw new RuntimeException("The {$package} dev dependency must contain a string constraint.");
+        }
+
+        if ($currentConstraint === $constraint) {
+            return false;
+        }
+
+        if ($currentConstraint !== null && ! $force) {
+            throw new RuntimeException(
+                "The {$package} dev dependency already uses {$currentConstraint}. Use --force to replace it.",
+            );
+        }
+
+        $requireDev[$package] = $constraint;
+        ksort($requireDev);
+        $composer['require-dev'] = $requireDev;
+        $this->writeComposer($composerPath, $composer);
+
+        return true;
+    }
+
     /**
      * @return array<string, mixed>
      */

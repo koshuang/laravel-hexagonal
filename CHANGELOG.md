@@ -12,3 +12,4 @@ and releases follow Semantic Versioning.
 - Initial Laravel 13 package scaffolding.
 - Idempotent project installer and module generator.
 - PHPUnit, PHPStan, PHPCS, PHP Insights, PHPMD, Rector, and CI baselines.
+- Deptrac configuration, dependency installation, and `hexagonal:validate` command.

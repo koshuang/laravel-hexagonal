@@ -6,4 +6,10 @@ return [
     'modules_namespace' => 'Modules',
 
     'shared_module' => 'Shared',
+
+    'deptrac' => [
+        'config' => base_path('deptrac.yaml'),
+        'binary' => base_path('vendor/bin/deptrac'),
+        'timeout' => 120,
+    ],
 ];

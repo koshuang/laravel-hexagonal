@@ -23,6 +23,7 @@ The complete Account money-transfer example lives in the companion repository:
 ```bash
 composer require koshuang/laravel-hexagonal
 php artisan hexagonal:install
+composer update deptrac/deptrac
 composer dump-autoload
 ```
 
@@ -73,6 +74,17 @@ Modules/Order/
 
 The installer also creates `Modules/Shared/Domain/Contracts`, a generic
 `deptrac.yaml`, and the `Modules\\` PSR-4 autoload entry in the application.
+It adds `deptrac/deptrac` to the application's development dependencies so the
+architecture check is reproducible in local development and CI.
+
+Validate the dependency direction after adding module code:
+
+```bash
+php artisan hexagonal:validate
+```
+
+The generated rules enforce `Infrastructure -> Application -> Domain` and do
+not allow Domain code to depend on Laravel framework classes.
 
 ## Development
 

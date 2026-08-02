@@ -28,7 +28,8 @@
         "illuminate/console": "^13.0",
         "illuminate/filesystem": "^13.0",
         "illuminate/support": "^13.0",
-        "nwidart/laravel-modules": "^13.0"
+        "nwidart/laravel-modules": "^13.0",
+        "symfony/process": "^7.4|^8.0"
     },
     "require-dev": {
         "deptrac/deptrac": "^4.7",
