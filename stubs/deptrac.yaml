@@ -20,7 +20,7 @@ deptrac:
       collectors:
         -
           type: classLike
-          value: .*Modules\\[^\\]+\\Domain\\.*
+          value: .*Modules\\(?!Shared\\)[^\\]+\\Domain\\.*
     -
       name: Shared
       collectors:
@@ -58,4 +58,6 @@ deptrac:
       - Shared
       - IlluminateSupport
     Domain:
+      - Shared
+    Shared:
       - Shared

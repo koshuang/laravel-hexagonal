@@ -14,3 +14,4 @@ and releases follow Semantic Versioning.
 - PHPUnit, PHPStan, PHPCS, PHP Insights, PHPMD, Rector, and CI baselines.
 - Deptrac configuration, dependency installation, and `hexagonal:validate` command.
 - Installer bootstrap for Nwidart modules and Composer plugin permissions.
+- Corrected generated Deptrac layers for Shared contracts and module Domains.
