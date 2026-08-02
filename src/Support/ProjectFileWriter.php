@@ -48,23 +48,83 @@ class ProjectFileWriter
             throw new RuntimeException("Composer file not found: {$composerPath}.");
         }
 
-        $contents = $this->files->get($composerPath);
-        $composer = json_decode($contents, true, 512, JSON_THROW_ON_ERROR);
-        $autoload = $composer['autoload']['psr-4'] ?? [];
+        $composer = $this->readComposer($composerPath);
+        $currentModulesPath = $this->readModulesAutoload($composer);
 
-        if (isset($autoload['Modules\\']) && ! $force) {
+        if ($currentModulesPath === 'Modules/') {
             return false;
         }
 
-        $composer['autoload']['psr-4']['Modules\\'] = 'Modules/';
+        if ($currentModulesPath !== null && ! $force) {
+            throw new RuntimeException(
+                "The Modules\\ autoload entry already points to {$currentModulesPath}. Use --force to replace it.",
+            );
+        }
 
+        $this->writeComposer($composerPath, $this->withModulesAutoload($composer));
+
+        return true;
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    private function readComposer(string $composerPath): array
+    {
+        $decodedComposer = json_decode($this->files->get($composerPath), true, 512, JSON_THROW_ON_ERROR);
+
+        if (! is_array($decodedComposer)) {
+            throw new RuntimeException("Composer file must contain a JSON object: {$composerPath}.");
+        }
+
+        /** @var array<string, mixed> $decodedComposer */
+        return $decodedComposer;
+    }
+
+    /**
+     * @param array<string, mixed> $composer
+     */
+    private function readModulesAutoload(array $composer): ?string
+    {
+        $autoload = $composer['autoload'] ?? [];
+        $psr4 = is_array($autoload) ? ($autoload['psr-4'] ?? []) : [];
+        $currentModulesPath = is_array($psr4) ? ($psr4['Modules\\'] ?? null) : null;
+
+        if ($currentModulesPath !== null && ! is_string($currentModulesPath)) {
+            throw new RuntimeException('The Modules\\ autoload entry must contain a string path.');
+        }
+
+        return $currentModulesPath;
+    }
+
+    /**
+     * @param array<string, mixed> $composer
+     *
+     * @return array<string, mixed>
+     */
+    private function withModulesAutoload(array $composer): array
+    {
+        $autoload = $composer['autoload'] ?? [];
+        $autoload = is_array($autoload) ? $autoload : [];
+        $psr4 = $autoload['psr-4'] ?? [];
+        $psr4 = is_array($psr4) ? $psr4 : [];
+        $psr4['Modules\\'] = 'Modules/';
+        $autoload['psr-4'] = $psr4;
+        $composer['autoload'] = $autoload;
+
+        return $composer;
+    }
+
+    /**
+     * @param array<string, mixed> $composer
+     */
+    private function writeComposer(string $composerPath, array $composer): void
+    {
         $updated = json_encode(
             $composer,
             JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_THROW_ON_ERROR,
         ) . PHP_EOL;
 
         $this->files->put($composerPath, $updated);
-
-        return true;
     }
 }

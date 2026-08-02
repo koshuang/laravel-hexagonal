@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<ruleset name="Laravel Hexagonal Standards">
+    <description>Code style rules for the Laravel Hexagonal package.</description>
+
+    <rule ref="onr-phpcs-laravel"/>
+
+    <file>src</file>
+    <file>tests</file>
+</ruleset>

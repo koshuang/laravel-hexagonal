@@ -1,0 +1,40 @@
+deptrac:
+  paths:
+    - ./src
+  exclude_files:
+    - '#.*Test.*#'
+  layers:
+    -
+      name: Provider
+      collectors:
+        -
+          type: classLike
+          value: .*Koshuang\\LaravelHexagonal\\LaravelHexagonalServiceProvider
+    -
+      name: Console
+      collectors:
+        -
+          type: classLike
+          value: .*Koshuang\\LaravelHexagonal\\Console\\.*
+    -
+      name: Support
+      collectors:
+        -
+          type: classLike
+          value: .*Koshuang\\LaravelHexagonal\\Support\\.*
+    -
+      name: Framework
+      collectors:
+        -
+          type: classLike
+          value: (Illuminate|Nwidart)\\.*
+  ruleset:
+    Provider:
+      - Console
+      - Support
+      - Framework
+    Console:
+      - Support
+      - Framework
+    Support:
+      - Framework

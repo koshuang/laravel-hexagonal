@@ -7,8 +7,10 @@ use Koshuang\LaravelHexagonal\Support\ProjectFileWriter;
 
 class InstallCommand extends Command
 {
+    /** @var string */
     protected $signature = 'hexagonal:install {--force : Overwrite files that already exist}';
 
+    /** @var string */
     protected $description = 'Install the modular hexagonal architecture into this Laravel application';
 
     public function handle(ProjectFileWriter $writer): int

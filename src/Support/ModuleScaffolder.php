@@ -8,10 +8,7 @@ use RuntimeException;
 
 class ModuleScaffolder
 {
-    /**
-     * @var array<int, string>
-     */
-    private const DIRECTORIES = [
+    private const array DIRECTORIES = [
         'Application/Port/In',
         'Application/Port/Out',
         'Application/Services',
@@ -34,10 +31,7 @@ class ModuleScaffolder
         'Tests/Unit',
     ];
 
-    /**
-     * @var array<string, string>
-     */
-    private const FILES = [
+    private const array FILES = [
         'module.json' => 'module.json.stub',
         'composer.json' => 'composer.json.stub',
         'Infrastructure/Providers/MODULEServiceProvider.php' => 'module-service-provider.php.stub',
@@ -61,8 +55,8 @@ class ModuleScaffolder
     ): int {
         $moduleName = Str::studly($moduleName);
 
-        if ($moduleName === '') {
-            throw new RuntimeException('Module name cannot be empty.');
+        if (! preg_match('/^[A-Z][A-Za-z0-9]*$/D', $moduleName)) {
+            throw new RuntimeException('Module name must contain only letters and numbers.');
         }
 
         $modulePath = rtrim($modulesPath, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR . $moduleName;

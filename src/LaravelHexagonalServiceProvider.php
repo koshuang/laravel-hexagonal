@@ -8,6 +8,7 @@ use Koshuang\LaravelHexagonal\Console\MakeModuleCommand;
 
 class LaravelHexagonalServiceProvider extends ServiceProvider
 {
+    #[\Override]
     public function register(): void
     {
         $this->mergeConfigFrom(__DIR__ . '/../config/hexagonal.php', 'hexagonal');

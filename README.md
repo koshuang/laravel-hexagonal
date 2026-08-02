@@ -1,18 +1,24 @@
 # Laravel Hexagonal
 
-Laravel scaffolding for modular Hexagonal Architecture (Ports and Adapters).
+[![Package CI](https://github.com/koshuang/laravel-hexagonal/actions/workflows/ci.yml/badge.svg)](https://github.com/koshuang/laravel-hexagonal/actions/workflows/ci.yml)
+[![Latest Stable Version](https://poser.pugx.org/koshuang/laravel-hexagonal/v/stable)](https://packagist.org/packages/koshuang/laravel-hexagonal)
+[![License](https://poser.pugx.org/koshuang/laravel-hexagonal/license)](https://packagist.org/packages/koshuang/laravel-hexagonal)
 
-This package is the reusable installation layer. The Account money-transfer application remains in the separate demo repository:
+Laravel scaffolding for modular Hexagonal Architecture (Ports and Adapters).
+It gives a fresh Laravel application a repeatable module structure without
+shipping an example domain into the application.
+
+The complete Account money-transfer example lives in the companion repository:
 
 <https://github.com/koshuang/laravel-hexagonal-architecture>
 
 ## Requirements
 
-- PHP 8.4+
+- PHP 8.4 or 8.5
 - Laravel 13
 - `nwidart/laravel-modules` 13
 
-## Install
+## Installation
 
 ```bash
 composer require koshuang/laravel-hexagonal
@@ -20,7 +26,12 @@ php artisan hexagonal:install
 composer dump-autoload
 ```
 
-The installer creates the `Modules/Shared` domain contracts, a generic `deptrac.yaml`, and the `Modules\\` PSR-4 autoload entry. Existing files are preserved unless `--force` is supplied.
+The installer is idempotent. Existing files are preserved by default. Use
+`--force` only when intentionally replacing generated files:
+
+```bash
+php artisan hexagonal:install --force
+```
 
 Create a module:
 
@@ -28,29 +39,76 @@ Create a module:
 php artisan hexagonal:make-module Order
 ```
 
-Each module has three explicit layers:
+The generated module has this dependency direction:
 
 ```text
 Infrastructure -> Application -> Domain
 ```
 
-Domain code must not depend on Laravel framework classes. Application code owns inbound and outbound ports. Infrastructure contains Laravel adapters, persistence, routes, and dependency injection bindings.
+- Domain contains business rules and must not depend on Laravel framework classes.
+- Application contains use cases and inbound/outbound ports.
+- Infrastructure contains Laravel adapters, persistence, routes, and bindings.
 
-## Current scope
+## Generated structure
 
-The first package version provides the Laravel service provider, project installer, module generator, shared domain contracts, and a generic Deptrac configuration. Quality-tool presets, architecture test generation, and frontend scaffolding will be added after the installer is validated against a clean Laravel application.
-
-## Local development
-
-The package repository is intentionally separate from the complete demo application. During development, the demo can consume this package through a Composer path repository:
-
-```json
-{
-    "repositories": [
-        {
-            "type": "path",
-            "url": "../laravel-hexagonal"
-        }
-    ]
-}
+```text
+Modules/Order/
+├── Application/
+│   ├── Port/In
+│   ├── Port/Out
+│   └── Services
+├── Domain/
+│   ├── Entities
+│   ├── Services
+│   └── ValueObjects
+├── Infrastructure/
+│   ├── Adapter/In
+│   ├── Adapter/Out
+│   ├── Config
+│   └── Providers
+└── Tests/
+    ├── Feature
+    └── Unit
 ```
+
+The installer also creates `Modules/Shared/Domain/Contracts`, a generic
+`deptrac.yaml`, and the `Modules\\` PSR-4 autoload entry in the application.
+
+## Development
+
+```bash
+composer install
+composer validate --strict
+composer test
+composer lint
+```
+
+The package development suite includes:
+
+- PHPUnit and Orchestra Testbench for Laravel integration tests
+- PHPStan Level 9 with Larastan
+- PHPCS with the Onramp Lab Laravel standard
+- PHP Insights
+- PHPMD
+- Deptrac dependency direction checks
+- Rector dry-run checks
+- GitHub Actions on PHP 8.4 and 8.5
+
+The package keeps its external interface small: the Laravel service provider,
+`hexagonal:install`, and `hexagonal:make-module`. File writing and module
+scaffolding are internal seams covered by unit tests.
+
+## Versioning
+
+Releases follow Semantic Versioning. The `1.x` line targets Laravel 13 and
+PHP 8.4+. Laravel major-version support changes require a compatibility update
+in `composer.json`, CI, and this document.
+
+## Contributing
+
+See [CONTRIBUTING.md](CONTRIBUTING.md) for development and pull request
+requirements. Changes are tracked in [CHANGELOG.md](CHANGELOG.md).
+
+## License
+
+This package is open-sourced software licensed under the [MIT license](LICENSE.md).
