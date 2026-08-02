@@ -38,3 +38,42 @@ jobs:
 
       - name: Run quality and test suite
         run: composer lint
+
+  integration:
+    name: Laravel 13 integration
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout package
+        uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.5'
+          extensions: mbstring, pdo_sqlite
+          coverage: none
+          tools: composer:v2
+
+      - name: Create clean Laravel application
+        run: composer create-project laravel/laravel:^13.0 /tmp/laravel-hexagonal-integration --no-interaction --no-progress --prefer-dist
+
+      - name: Install package from current checkout
+        working-directory: /tmp/laravel-hexagonal-integration
+        run: |
+          composer config repositories.hexagonal path "$GITHUB_WORKSPACE"
+          composer require koshuang/laravel-hexagonal:dev-main --no-interaction --no-progress --prefer-dist
+
+      - name: Install architecture scaffolding
+        working-directory: /tmp/laravel-hexagonal-integration
+        run: php artisan hexagonal:install
+
+      - name: Install architecture validation tools
+        working-directory: /tmp/laravel-hexagonal-integration
+        run: composer update deptrac/deptrac --no-interaction --no-progress --prefer-dist
+
+      - name: Generate and validate a module
+        working-directory: /tmp/laravel-hexagonal-integration
+        run: |
+          php artisan hexagonal:make-module Order
+          php artisan hexagonal:validate
