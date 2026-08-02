@@ -1,0 +1,13 @@
+<?php
+
+namespace {{MODULE_NAMESPACE}}\{{MODULE}}\Infrastructure\Providers;
+
+use Illuminate\Support\ServiceProvider;
+
+class DIServiceProvider extends ServiceProvider
+{
+    public function register(): void
+    {
+        // Bind application ports to infrastructure adapters here.
+    }
+}

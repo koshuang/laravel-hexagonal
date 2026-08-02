@@ -1,0 +1,62 @@
+deptrac:
+  paths:
+    - ./Modules
+  ignore_uncovered_internal_classes: true
+  layers:
+    -
+      name: Infrastructure
+      collectors:
+        -
+          type: classLike
+          value: .*Modules\\[^\\]+\\Infrastructure\\.*
+    -
+      name: Application
+      collectors:
+        -
+          type: classLike
+          value: .*Modules\\[^\\]+\\Application\\.*
+    -
+      name: Domain
+      collectors:
+        -
+          type: classLike
+          value: .*Modules\\[^\\]+\\Domain\\.*
+    -
+      name: Shared
+      collectors:
+        -
+          type: classLike
+          value: .*Modules\\Shared\\.*
+    -
+      name: Illuminate
+      collectors:
+        -
+          type: classLike
+          value: .*Illuminate\\(?!Support).*
+    -
+      name: IlluminateSupportFacade
+      collectors:
+        -
+          type: classLike
+          value: .*Illuminate\\Support\\Facades\\.*
+    -
+      name: IlluminateSupport
+      collectors:
+        -
+          type: classLike
+          value: .*Illuminate\\Support\\(?!Facades).*
+  ruleset:
+    Infrastructure:
+      - Application
+      - Domain
+      - Shared
+      - Illuminate
+      - IlluminateSupportFacade
+      - IlluminateSupport
+    Application:
+      - Domain
+      - Shared
+      - IlluminateSupport
+    Domain:
+      - Shared
+      - IlluminateSupport

@@ -1,0 +1,11 @@
+{
+    "name": "{{MODULE}}",
+    "alias": "{{MODULE_LOWER}}",
+    "description": "",
+    "keywords": [],
+    "priority": 0,
+    "providers": [
+        "{{MODULE_NAMESPACE}}\\{{MODULE}}\\Infrastructure\\Providers\\{{PROVIDER}}"
+    ],
+    "files": []
+}

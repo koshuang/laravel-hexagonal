@@ -1,0 +1,8 @@
+{
+    "name": "app/{{MODULE_LOWER}}",
+    "autoload": {
+        "psr-4": {
+            "{{MODULE_NAMESPACE}}\\{{MODULE}}\\": ""
+        }
+    }
+}

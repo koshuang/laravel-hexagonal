@@ -1,0 +1,34 @@
+{
+    "name": "koshuang/laravel-hexagonal",
+    "description": "Laravel scaffolding for modular hexagonal architecture.",
+    "type": "library",
+    "license": "MIT",
+    "keywords": [
+        "laravel",
+        "hexagonal-architecture",
+        "clean-architecture",
+        "ddd",
+        "ports-and-adapters"
+    ],
+    "require": {
+        "php": "^8.4",
+        "illuminate/console": "^13.0",
+        "illuminate/filesystem": "^13.0",
+        "illuminate/support": "^13.0",
+        "nwidart/laravel-modules": "^13.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Koshuang\\LaravelHexagonal\\": "src/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Koshuang\\LaravelHexagonal\\LaravelHexagonalServiceProvider"
+            ]
+        }
+    },
+    "minimum-stability": "stable",
+    "prefer-stable": true
+}

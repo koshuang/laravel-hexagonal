@@ -1,0 +1,19 @@
+<?php
+
+namespace {{MODULE_NAMESPACE}}\{{MODULE}}\Infrastructure\Providers;
+
+use Illuminate\Support\ServiceProvider;
+
+class {{PROVIDER}} extends ServiceProvider
+{
+    public function register(): void
+    {
+        $this->app->register(DIServiceProvider::class);
+        $this->app->register(RouteServiceProvider::class);
+    }
+
+    public function boot(): void
+    {
+        $this->loadMigrationsFrom(module_path('{{MODULE}}', 'Infrastructure/Adapter/Out/Persistence/Migrations'));
+    }
+}
