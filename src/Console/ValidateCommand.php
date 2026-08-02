@@ -34,7 +34,7 @@ class ValidateCommand extends Command
 
         if (! is_file($binaryPath)) {
             $this->error("Deptrac executable not found: {$binaryPath}");
-            $this->line('Run "composer update deptrac/deptrac" to install the architecture validation tools.');
+            $this->line('Run "composer update nwidart/laravel-modules deptrac/deptrac" to install architecture dependencies.');
 
             return self::FAILURE;
         }

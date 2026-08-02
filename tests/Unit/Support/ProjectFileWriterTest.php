@@ -81,6 +81,38 @@ final class ProjectFileWriterTest extends TestCase
         $this->assertSame('^4.7', $composer['require-dev']['deptrac/deptrac']);
     }
 
+    public function test_it_adds_the_modules_runtime_dependency(): void
+    {
+        $files = new Filesystem();
+        $composerPath = $this->fixturePath . '/composer.json';
+        $files->put($composerPath, '{}');
+
+        $this->assertTrue(new ProjectFileWriter($files)->addRuntimeDependency(
+            $composerPath,
+            'nwidart/laravel-modules',
+            '^13.0',
+        ));
+        /** @var array{require: array<string, string>} $composer */
+        $composer = json_decode($files->get($composerPath), true, 512, JSON_THROW_ON_ERROR);
+
+        $this->assertSame('^13.0', $composer['require']['nwidart/laravel-modules']);
+    }
+
+    public function test_it_allows_the_modules_composer_plugin_once(): void
+    {
+        $files = new Filesystem();
+        $composerPath = $this->fixturePath . '/composer.json';
+        $files->put($composerPath, '{}');
+        $writer = new ProjectFileWriter($files);
+
+        $this->assertTrue($writer->allowComposerPlugin($composerPath, 'wikimedia/composer-merge-plugin'));
+        $this->assertFalse($writer->allowComposerPlugin($composerPath, 'wikimedia/composer-merge-plugin'));
+        /** @var array{config: array{'allow-plugins': array<string, bool>}} $composer */
+        $composer = json_decode($files->get($composerPath), true, 512, JSON_THROW_ON_ERROR);
+
+        $this->assertTrue($composer['config']['allow-plugins']['wikimedia/composer-merge-plugin']);
+    }
+
     public function test_it_does_not_replace_an_existing_dev_dependency_without_force(): void
     {
         $files = new Filesystem();

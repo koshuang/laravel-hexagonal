@@ -13,3 +13,4 @@ and releases follow Semantic Versioning.
 - Idempotent project installer and module generator.
 - PHPUnit, PHPStan, PHPCS, PHP Insights, PHPMD, Rector, and CI baselines.
 - Deptrac configuration, dependency installation, and `hexagonal:validate` command.
+- Installer bootstrap for Nwidart modules and Composer plugin permissions.

@@ -34,11 +34,15 @@ class InstallCommand extends Command
             $force,
         );
         $composerPath = base_path('composer.json');
+        $writer->addRuntimeDependency($composerPath, 'nwidart/laravel-modules', '^13.0', $force);
         $writer->addModulesAutoload($composerPath, $force);
         $writer->addDevDependency($composerPath, 'deptrac/deptrac', '^4.7', $force);
+        $writer->allowComposerPlugin($composerPath, 'wikimedia/composer-merge-plugin', $force);
 
         $this->info('Laravel Hexagonal Architecture installed.');
-        $this->line('Run "composer update deptrac/deptrac" to install the architecture validation tools.');
+        $this->line(
+            'Run "composer update nwidart/laravel-modules deptrac/deptrac" to install architecture dependencies.',
+        );
         $this->line('Run "composer dump-autoload" before creating your first module.');
         $this->line('Create a module with: php artisan hexagonal:make-module <Name>');
         $this->line('Validate architecture with: php artisan hexagonal:validate');

@@ -70,7 +70,7 @@ jobs:
 
       - name: Install architecture validation tools
         working-directory: /tmp/laravel-hexagonal-integration
-        run: composer update deptrac/deptrac --no-interaction --no-progress --prefer-dist
+        run: composer update nwidart/laravel-modules deptrac/deptrac --no-interaction --no-progress --prefer-dist
 
       - name: Generate and validate a module
         working-directory: /tmp/laravel-hexagonal-integration

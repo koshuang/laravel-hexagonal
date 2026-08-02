@@ -72,14 +72,65 @@ class ProjectFileWriter
         string $constraint,
         bool $force = false,
     ): bool {
+        return $this->addDependency($composerPath, 'require-dev', $package, $constraint, $force);
+    }
+
+    public function addRuntimeDependency(
+        string $composerPath,
+        string $package,
+        string $constraint,
+        bool $force = false,
+    ): bool {
+        return $this->addDependency($composerPath, 'require', $package, $constraint, $force);
+    }
+
+    public function allowComposerPlugin(string $composerPath, string $plugin, bool $force = false): bool
+    {
         if (! $this->files->exists($composerPath)) {
             throw new RuntimeException("Composer file not found: {$composerPath}.");
         }
 
         $composer = $this->readComposer($composerPath);
-        $requireDev = $composer['require-dev'] ?? [];
-        $requireDev = is_array($requireDev) ? $requireDev : [];
-        $currentConstraint = $requireDev[$package] ?? null;
+        $config = $composer['config'] ?? [];
+        $config = is_array($config) ? $config : [];
+        $allowPlugins = $config['allow-plugins'] ?? [];
+        $allowPlugins = is_array($allowPlugins) ? $allowPlugins : [];
+        $currentPermission = $allowPlugins[$plugin] ?? null;
+
+        if ($currentPermission === true) {
+            return false;
+        }
+
+        if ($currentPermission !== null && ! $force) {
+            throw new RuntimeException(
+                "The {$plugin} Composer plugin permission is not enabled. Use --force to replace it.",
+            );
+        }
+
+        $allowPlugins[$plugin] = true;
+        ksort($allowPlugins);
+        $config['allow-plugins'] = $allowPlugins;
+        $composer['config'] = $config;
+        $this->writeComposer($composerPath, $composer);
+
+        return true;
+    }
+
+    private function addDependency(
+        string $composerPath,
+        string $section,
+        string $package,
+        string $constraint,
+        bool $force,
+    ): bool {
+        if (! $this->files->exists($composerPath)) {
+            throw new RuntimeException("Composer file not found: {$composerPath}.");
+        }
+
+        $composer = $this->readComposer($composerPath);
+        $dependencies = $composer[$section] ?? [];
+        $dependencies = is_array($dependencies) ? $dependencies : [];
+        $currentConstraint = $dependencies[$package] ?? null;
 
         if ($currentConstraint !== null && ! is_string($currentConstraint)) {
             throw new RuntimeException("The {$package} dev dependency must contain a string constraint.");
@@ -95,9 +146,9 @@ class ProjectFileWriter
             );
         }
 
-        $requireDev[$package] = $constraint;
-        ksort($requireDev);
-        $composer['require-dev'] = $requireDev;
+        $dependencies[$package] = $constraint;
+        ksort($dependencies);
+        $composer[$section] = $dependencies;
         $this->writeComposer($composerPath, $composer);
 
         return true;

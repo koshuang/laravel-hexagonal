@@ -28,7 +28,6 @@
         "illuminate/console": "^13.0",
         "illuminate/filesystem": "^13.0",
         "illuminate/support": "^13.0",
-        "nwidart/laravel-modules": "^13.0",
         "symfony/process": "^7.4|^8.0"
     },
     "require-dev": {
@@ -37,6 +36,7 @@
         "mockery/mockery": "^1.6",
         "nunomaduro/phpinsights": "^2.14",
         "onramplab/onr-phpcs-laravel": "^1.2",
+        "nwidart/laravel-modules": "^13.0",
         "orchestra/testbench": "^11.0",
         "phpmd/phpmd": "^2.15",
         "phpstan/extension-installer": "^1.4",

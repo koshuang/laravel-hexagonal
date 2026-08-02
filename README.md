@@ -23,7 +23,7 @@ The complete Account money-transfer example lives in the companion repository:
 ```bash
 composer require koshuang/laravel-hexagonal
 php artisan hexagonal:install
-composer update deptrac/deptrac
+composer update nwidart/laravel-modules deptrac/deptrac
 composer dump-autoload
 ```
 
@@ -76,6 +76,9 @@ The installer also creates `Modules/Shared/Domain/Contracts`, a generic
 `deptrac.yaml`, and the `Modules\\` PSR-4 autoload entry in the application.
 It adds `deptrac/deptrac` to the application's development dependencies so the
 architecture check is reproducible in local development and CI.
+It also adds `nwidart/laravel-modules` and enables its Composer merge plugin in
+the application root, because Composer plugin permissions are root-project
+configuration and cannot be inherited from a package.
 
 Validate the dependency direction after adding module code:
 
