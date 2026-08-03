@@ -9,6 +9,7 @@ and releases follow Semantic Versioning.
 
 ### Added
 
+- Use `readonly` in the generated Identity stub for formatter compatibility.
 - Publishable package stubs and custom module stub support.
 - Initial Laravel 13 package scaffolding.
 - Idempotent project installer and module generator.

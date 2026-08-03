@@ -6,7 +6,7 @@ use Stringable;
 
 abstract class Identity extends ValueObject implements Nullable, Stringable
 {
-    public private(set) int|string $value;
+    public readonly int|string $value;
 
     public function __construct(int|string $value)
     {
