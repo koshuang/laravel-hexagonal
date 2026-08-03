@@ -19,6 +19,8 @@ class ModuleScaffolder
         'Infrastructure/Adapter/In/Web/Http/Controllers',
         'Infrastructure/Adapter/In/Web/Http/Middleware',
         'Infrastructure/Adapter/In/Web/Http/Requests',
+        'Infrastructure/Adapter/In/Web/Resources/lang',
+        'Infrastructure/Adapter/In/Web/Resources/views',
         'Infrastructure/Adapter/In/Web/Routes',
         'Infrastructure/Adapter/Out/Persistence/Factories',
         'Infrastructure/Adapter/Out/Persistence/Migrations',
@@ -88,6 +90,14 @@ class ModuleScaffolder
             );
             $this->files->put($target, $contents);
             $written++;
+        }
+
+        // Track empty directories in version control with a .gitkeep marker.
+        foreach (self::DIRECTORIES as $directory) {
+            $directoryPath = $modulePath . DIRECTORY_SEPARATOR . $directory;
+            if ($this->files->allFiles($directoryPath) === []) {
+                $this->files->put($directoryPath . DIRECTORY_SEPARATOR . '.gitkeep', '');
+            }
         }
 
         return $written;

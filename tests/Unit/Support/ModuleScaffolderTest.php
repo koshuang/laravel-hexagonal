@@ -47,6 +47,24 @@ final class ModuleScaffolderTest extends TestCase
         );
     }
 
+    public function test_it_places_gitkeep_in_empty_directories(): void
+    {
+        $scaffolder = new ModuleScaffolder(new Filesystem());
+
+        $scaffolder->scaffold(
+            'order',
+            $this->fixturePath,
+            'Modules',
+            dirname(__DIR__, 3) . '/stubs/module',
+        );
+
+        $this->assertFileExists($this->fixturePath . '/Order/Domain/Entities/.gitkeep');
+        $this->assertFileExists($this->fixturePath . '/Order/Infrastructure/Adapter/In/Web/Resources/views/.gitkeep');
+        $this->assertFileExists($this->fixturePath . '/Order/Infrastructure/Adapter/In/Web/Resources/lang/.gitkeep');
+        $this->assertFileDoesNotExist($this->fixturePath . '/Order/Infrastructure/Config/.gitkeep');
+        $this->assertFileDoesNotExist($this->fixturePath . '/Order/Infrastructure/Providers/.gitkeep');
+    }
+
     public function test_it_rejects_a_module_name_that_can_escape_the_modules_directory(): void
     {
         $this->expectException(RuntimeException::class);

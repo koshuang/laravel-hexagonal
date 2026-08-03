@@ -2,10 +2,21 @@
 
 namespace {{MODULE_NAMESPACE}}\{{MODULE}}\Infrastructure\Providers;
 
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\ServiceProvider;
 
 class {{PROVIDER}} extends ServiceProvider
 {
+    /**
+     * @var string
+     */
+    protected $moduleName = '{{MODULE}}';
+
+    /**
+     * @var string
+     */
+    protected $moduleNameLower = '{{MODULE_LOWER}}';
+
     public function register(): void
     {
         $this->app->register(DIServiceProvider::class);
@@ -14,6 +25,79 @@ class {{PROVIDER}} extends ServiceProvider
 
     public function boot(): void
     {
-        $this->loadMigrationsFrom(module_path('{{MODULE}}', 'Infrastructure/Adapter/Out/Persistence/Migrations'));
+        $this->registerTranslations();
+        $this->registerConfig();
+        $this->registerCommands();
+        $this->registerViews();
+        $this->loadMigrationsFrom(module_path($this->moduleName, 'Infrastructure/Adapter/Out/Persistence/Migrations'));
+    }
+
+    public function registerCommands(): void
+    {
+        $this->commands([]);
+    }
+
+    /**
+     * Register views.
+     */
+    public function registerViews(): void
+    {
+        $viewPath = resource_path('views/modules/' . $this->moduleNameLower);
+
+        $sourcePath = module_path($this->moduleName, 'Infrastructure/Adapter/In/Web/Resources/views');
+
+        $this->publishes([
+            $sourcePath => $viewPath,
+        ], ['views', $this->moduleNameLower . '-module-views']);
+
+        $this->loadViewsFrom(array_merge($this->getPublishableViewPaths(), [$sourcePath]), $this->moduleNameLower);
+    }
+
+    /**
+     * Register translations.
+     */
+    public function registerTranslations(): void
+    {
+        $langPath = resource_path('lang/modules/' . $this->moduleNameLower);
+
+        if (is_dir($langPath)) {
+            $this->loadTranslationsFrom($langPath, $this->moduleNameLower);
+            $this->loadJsonTranslationsFrom($langPath);
+        } else {
+            $this->loadTranslationsFrom(module_path($this->moduleName, 'Infrastructure/Adapter/In/Web/Resources/lang'), $this->moduleNameLower);
+            $this->loadJsonTranslationsFrom(module_path($this->moduleName, 'Infrastructure/Adapter/In/Web/Resources/lang'));
+        }
+    }
+
+    /**
+     * Register config.
+     */
+    protected function registerConfig(): void
+    {
+        $this->publishes([
+            module_path($this->moduleName, 'Infrastructure/Config/config.php') => config_path($this->moduleNameLower . '.php'),
+        ], 'config');
+        $this->mergeConfigFrom(
+            module_path($this->moduleName, 'Infrastructure/Config/config.php'),
+            $this->moduleNameLower,
+        );
+    }
+
+    /**
+     * @return array<int, string>
+     */
+    private function getPublishableViewPaths(): array
+    {
+        $paths = [];
+
+        /** @var array<int, string> $viewPaths */
+        $viewPaths = Config::get('view.paths', []);
+        foreach ($viewPaths as $path) {
+            if (is_dir($path . '/modules/' . $this->moduleNameLower)) {
+                $paths[] = $path . '/modules/' . $this->moduleNameLower;
+            }
+        }
+
+        return $paths;
     }
 }

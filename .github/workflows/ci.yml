@@ -80,6 +80,24 @@ jobs:
           test -f Modules/Shared/Domain/Contracts/Identity.php
           test -f deptrac.yaml
           php -r '$composer = json_decode(file_get_contents("composer.json"), true, 512, JSON_THROW_ON_ERROR); if (($composer["autoload"]["psr-4"]["Modules\\"] ?? null) !== "Modules/") { exit(1); }'
+          # Generated deptrac covers ./app and ./Modules and keeps allowances.
+          grep -q -- '- ./app' deptrac.yaml
+          grep -q -- '- ./Modules' deptrac.yaml
+          grep -q 'name: Carbon' deptrac.yaml
+          grep -q 'name: IlluminateSupportFacade' deptrac.yaml
+
+      - name: Verify generated deptrac honours configurable allowances
+        working-directory: /tmp/laravel-hexagonal-integration
+        run: |
+          # Default install keeps Carbon; re-running install --force reads the
+          # allowances from the published config and renders deptrac accordingly.
+          sed -i "s/'carbon' => true,/'carbon' => false,/" config/hexagonal.php
+          php artisan hexagonal:install --force
+          if grep -q 'name: Carbon' deptrac.yaml; then exit 1; fi
+          if grep -q -- '- Carbon' deptrac.yaml; then exit 1; fi
+          grep -q -- '- ./app' deptrac.yaml
+          grep -q -- '- ./Modules' deptrac.yaml
+          grep -q 'name: IlluminateSupportFacade' deptrac.yaml
 
       - name: Install architecture validation tools
         working-directory: /tmp/laravel-hexagonal-integration
@@ -95,3 +113,20 @@ jobs:
           php artisan hexagonal:make-module Custom --stub-path=/tmp/laravel-hexagonal-custom-stubs
           grep -q 'Custom stub integration assertion' Modules/Custom/Infrastructure/Providers/CustomServiceProvider.php
           php artisan hexagonal:validate
+
+      - name: Verify make-module statuses registration
+        working-directory: /tmp/laravel-hexagonal-integration
+        run: |
+          # A fresh module is enabled in modules_statuses.json.
+          php artisan hexagonal:make-module Cart
+          grep -q '"Cart": true' modules_statuses.json
+          # Unknown pre-existing entries are preserved.
+          php -r '$s = json_decode(file_get_contents("modules_statuses.json"), true); $s["External"] = false; file_put_contents("modules_statuses.json", json_encode($s, JSON_PRETTY_PRINT));'
+          php artisan hexagonal:make-module Invoice
+          grep -q '"External": false' modules_statuses.json
+          grep -q '"Invoice": true' modules_statuses.json
+          # --no-active registers the module as disabled.
+          php artisan hexagonal:make-module Deferred --no-active
+          grep -q '"Deferred": false' modules_statuses.json
+          # Duplicate module name without --force is rejected.
+          if php artisan hexagonal:make-module Cart; then exit 1; fi

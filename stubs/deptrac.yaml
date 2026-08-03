@@ -1,8 +1,15 @@
 deptrac:
   paths:
+    - ./app
     - ./Modules
   ignore_uncovered_internal_classes: true
   layers:
+    -
+      name: App
+      collectors:
+        -
+          type: classLike
+          value: .*App\\.*
     -
       name: Infrastructure
       collectors:
@@ -45,7 +52,22 @@ deptrac:
         -
           type: classLike
           value: .*Illuminate\\Support\\(?!Facades).*
+    -
+      name: Carbon
+      collectors:
+        -
+          type: classLike
+          value: .*Carbon\\.*
   ruleset:
+    App:
+      - Infrastructure
+      - Application
+      - Domain
+      - Shared
+      - Illuminate
+      - IlluminateSupportFacade
+      - IlluminateSupport
+      - Carbon
     Infrastructure:
       - Application
       - Domain
@@ -53,11 +75,15 @@ deptrac:
       - Illuminate
       - IlluminateSupportFacade
       - IlluminateSupport
+      - Carbon
     Application:
       - Domain
       - Shared
       - IlluminateSupport
+      - Carbon
     Domain:
       - Shared
+      - IlluminateSupport
+      - Carbon
     Shared:
       - Shared

@@ -40,6 +40,14 @@ Create a module:
 php artisan hexagonal:make-module Order
 ```
 
+New modules are registered as enabled in `modules_statuses.json`, which lets
+Nwidart load the generated module immediately. To scaffold a disabled module,
+use:
+
+```bash
+php artisan hexagonal:make-module Order --no-active
+```
+
 ### Custom stubs
 
 The package ships with the default module, Shared contracts, and Deptrac stubs.
@@ -101,6 +109,10 @@ It also adds `nwidart/laravel-modules` and enables its Composer merge plugin in
 the application root, because Composer plugin permissions are root-project
 configuration and cannot be inherited from a package.
 
+The generated `deptrac.yaml` covers both `app/` and `Modules/`. Carbon and
+Illuminate allowances can be disabled in `config/hexagonal.php` under
+`deptrac.allowances` before rerunning `php artisan hexagonal:install --force`.
+
 Validate the dependency direction after adding module code:
 
 ```bash
@@ -136,9 +148,12 @@ module scaffolding are internal seams covered by unit tests.
 
 ## Versioning
 
-Releases follow Semantic Versioning. The `1.x` line targets Laravel 13 and
-PHP 8.4+. Laravel major-version support changes require a compatibility update
-in `composer.json`, CI, and this document.
+Releases follow Semantic Versioning. This project is pre-1.0: while the
+external interface is stable in practice, breaking changes land in `0.x` minor
+bumps rather than a `1.0` major, so pin a `^0.<minor>` constraint to stay
+stable during onboarding. The `0.x` line targets Laravel 13 and PHP 8.4+.
+Laravel major-version support changes require a compatibility update in
+`composer.json`, CI, and this document.
 
 ## Contributing
 
