@@ -66,11 +66,20 @@ jobs:
 
       - name: Publish architecture stubs
         working-directory: /tmp/laravel-hexagonal-integration
-        run: php artisan vendor:publish --tag=hexagonal-stubs --force --no-interaction
+        run: |
+          php artisan vendor:publish --tag=hexagonal-stubs --force --no-interaction
+          test -f stubs/hexagonal/module/module-service-provider.php.stub
+          test -f stubs/hexagonal/shared/Domain/Contracts/Identity.php
+          test -f stubs/hexagonal/deptrac.yaml
 
       - name: Install architecture scaffolding from published stubs
         working-directory: /tmp/laravel-hexagonal-integration
-        run: php artisan hexagonal:install
+        run: |
+          php artisan hexagonal:install
+          test -f config/hexagonal.php
+          test -f Modules/Shared/Domain/Contracts/Identity.php
+          test -f deptrac.yaml
+          php -r '$composer = json_decode(file_get_contents("composer.json"), true, 512, JSON_THROW_ON_ERROR); if (($composer["autoload"]["psr-4"]["Modules\\"] ?? null) !== "Modules/") { exit(1); }'
 
       - name: Install architecture validation tools
         working-directory: /tmp/laravel-hexagonal-integration
@@ -79,5 +88,10 @@ jobs:
       - name: Generate and validate a module
         working-directory: /tmp/laravel-hexagonal-integration
         run: |
+          mkdir -p /tmp/laravel-hexagonal-custom-stubs
+          cp -R stubs/hexagonal/module/. /tmp/laravel-hexagonal-custom-stubs/
+          printf '\n// Custom stub integration assertion.\n' >> /tmp/laravel-hexagonal-custom-stubs/module-service-provider.php.stub
           php artisan hexagonal:make-module Order
+          php artisan hexagonal:make-module Custom --stub-path=/tmp/laravel-hexagonal-custom-stubs
+          grep -q 'Custom stub integration assertion' Modules/Custom/Infrastructure/Providers/CustomServiceProvider.php
           php artisan hexagonal:validate

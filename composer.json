@@ -88,7 +88,7 @@
             "@php vendor/bin/phpcbf"
         ],
         "phpmd": [
-            "@php vendor/bin/phpmd src text rulesets.xml"
+            "tools/scripts/phpmd.sh src text rulesets.xml"
         ],
         "deptrac": [
             "@php vendor/bin/deptrac analyze --config-file=deptrac.yaml"
@@ -102,7 +102,7 @@
         "lint": [
             "@php vendor/bin/phpstan analyse --memory-limit=1G",
             "@php vendor/bin/phpcs",
-            "@php vendor/bin/phpmd src text rulesets.xml",
+            "tools/scripts/phpmd.sh src text rulesets.xml",
             "@php vendor/bin/deptrac analyze --config-file=deptrac.yaml",
             "@php vendor/bin/phpinsights --no-interaction",
             "@php vendor/bin/rector process --dry-run",
