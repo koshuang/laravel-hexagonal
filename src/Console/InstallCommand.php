@@ -4,6 +4,7 @@ namespace Koshuang\LaravelHexagonal\Console;
 
 use Illuminate\Console\Command;
 use Koshuang\LaravelHexagonal\Support\ProjectFileWriter;
+use Koshuang\LaravelHexagonal\Support\StubPathResolver;
 
 class InstallCommand extends Command
 {
@@ -13,7 +14,7 @@ class InstallCommand extends Command
     /** @var string */
     protected $description = 'Install the modular hexagonal architecture into this Laravel application';
 
-    public function handle(ProjectFileWriter $writer): int
+    public function handle(ProjectFileWriter $writer, StubPathResolver $stubPaths): int
     {
         $packagePath = dirname(__DIR__, 2);
         $force = (bool) $this->option('force');
@@ -24,12 +25,12 @@ class InstallCommand extends Command
             $force,
         );
         $writer->copyDirectory(
-            $packagePath . '/stubs/shared',
+            $stubPaths->shared(),
             base_path('Modules/Shared'),
             $force,
         );
         $writer->copyFile(
-            $packagePath . '/stubs/deptrac.yaml',
+            $stubPaths->deptrac(),
             base_path('deptrac.yaml'),
             $force,
         );

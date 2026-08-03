@@ -9,6 +9,7 @@ and releases follow Semantic Versioning.
 
 ### Added
 
+- Publishable package stubs and custom module stub support.
 - Initial Laravel 13 package scaffolding.
 - Idempotent project installer and module generator.
 - PHPUnit, PHPStan, PHPCS, PHP Insights, PHPMD, Rector, and CI baselines.

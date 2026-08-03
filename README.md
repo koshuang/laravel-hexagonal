@@ -40,6 +40,27 @@ Create a module:
 php artisan hexagonal:make-module Order
 ```
 
+### Custom stubs
+
+The package ships with the default module, Shared contracts, and Deptrac stubs.
+Publish them when the application needs to customize the generated files:
+
+```bash
+php artisan vendor:publish --tag=hexagonal-stubs
+```
+
+The published files are placed under `stubs/hexagonal`. Subsequent runs of
+`hexagonal:install` and `hexagonal:make-module` use those files automatically.
+For a one-off module template, pass a different directory explicitly:
+
+```bash
+php artisan hexagonal:make-module Order --stub-path=stubs/custom-module
+```
+
+Custom module stubs must keep the filenames shipped by the package and may use
+the `{{MODULE}}`, `{{MODULE_LOWER}}`, `{{MODULE_NAMESPACE}}`, and `{{PROVIDER}}`
+placeholders.
+
 The generated module has this dependency direction:
 
 ```text
@@ -110,8 +131,8 @@ The package development suite includes:
 - GitHub Actions on PHP 8.4 and 8.5
 
 The package keeps its external interface small: the Laravel service provider,
-`hexagonal:install`, and `hexagonal:make-module`. File writing and module
-scaffolding are internal seams covered by unit tests.
+the three Artisan commands, and the publishable stub set. File writing and
+module scaffolding are internal seams covered by unit tests.
 
 ## Versioning
 

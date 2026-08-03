@@ -64,7 +64,11 @@ jobs:
           composer config repositories.hexagonal path "$GITHUB_WORKSPACE"
           composer require koshuang/laravel-hexagonal:dev-main --no-interaction --no-progress --prefer-dist
 
-      - name: Install architecture scaffolding
+      - name: Publish architecture stubs
+        working-directory: /tmp/laravel-hexagonal-integration
+        run: php artisan vendor:publish --tag=hexagonal-stubs --force --no-interaction
+
+      - name: Install architecture scaffolding from published stubs
         working-directory: /tmp/laravel-hexagonal-integration
         run: php artisan hexagonal:install
 
